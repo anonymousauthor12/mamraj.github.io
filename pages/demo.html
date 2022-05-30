@@ -1,0 +1,87 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<head>
+    <title>All Student Detail</title>
+
+    <style>
+        body{
+            margin-top: 20px;
+            text-align: center;
+            background-color: #c9b7b7;
+        }
+        #delete,#update,#back,#add{
+            float: left;
+        }
+        th{
+            padding: 15px;
+            background-color: black;
+            color: white;
+        }
+        td{
+            padding: 15px;
+        }
+
+        #back{
+            padding-left: 40%;
+            padding-right: 20px;
+            float: left;
+            text-align: center;
+        }
+        table, th, td {
+            border:1px solid black;
+        }
+        #center{
+            text-align: center;
+        }
+        td{
+            text-align: center;
+        }
+        #back1{
+            padding-top: 20px;
+        }
+        #a1,#a2{
+            padding-left: 110px;
+        }
+        #newStd{
+            font-size: 25px;
+        }
+    </style>
+</head>
+<body>
+<div >
+    <div>
+        <h1 class="text-center mb-3" id="center">All Student's Detail Here <a href="Student" id="newStd" style="margin-left: 40px" >Add New Student</a></h1>
+        <hr style="border:1px solid blue">
+        <table width="100%">
+            <thead>
+            <tr>
+                <th >Roll No</th>
+                <th>Full Name</th>
+                <th>Action1</th>
+                <th>Action2</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            <c:forEach items="${students}" var="student">
+                <tr>
+                    <td scope="row">${student.rollNo}</td>
+                    <td>${student.firstName} ${student.middleName} ${student.lastName}</td>
+                    <td id="a1">
+                        <a href="deleteStudent/${student.rollNo}" id="delete">Delete</a>
+
+                    </td>
+                    <td id="a2">
+                        <a href="updateStudent/${student.rollNo}" id="update">Update</a>
+                    </td>
+                </tr>
+            </c:forEach>
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+</body>
+</html>

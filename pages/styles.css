@@ -1,0 +1,98 @@
+header{
+    background-color:  rgb(8, 8, 67);
+}
+#mainHeading,#navBar,#galleryHeader{
+    border: groove;
+    padding: 10px;
+}
+
+#school_name,#school_Address{
+    padding-left: 20px;
+    color: white;
+}
+.hed{
+    width: 100%;
+    float: left;
+    position:fixed;
+    background-color:  rgb(8, 8, 67);
+}
+.glly{
+    width: 100%;
+    position:fixed;
+    background-color:  rgb(8, 8, 67);
+}
+#logo{
+    width: 300px;
+}
+.nav-link{
+    font-size: 25px;
+}
+#home,#gallery,#course,#faculty,#contact{
+    color: whitesmoke;
+    margin-left: 10px;
+}
+#img1{
+    width: 100%;
+}
+#navG{
+    width: 100%;
+}
+
+ /*footer*/
+ footer { 
+     border: groove;
+    width:100%; 
+    background-color:  rgb(28, 28, 48);
+    padding:10px 0px 25px 0px ;
+}
+#b1{
+    padding: 20px;
+    width: 50%;
+    float: left;
+}
+#copy
+{
+   width: 100%;
+    justify-content: right;
+}
+a{
+    text-decoration: none;
+}
+
+.nav-item1{
+    width: auto;
+    padding: 10px;
+    text-decoration: none;
+    font-size: 100%;
+}
+.head{
+    padding: 20px;
+    color: white;
+    text-align: center;
+
+}
+
+#mg1{
+    padding: 2%;
+    width: 100%;
+}
+.imagesGallery{
+    background-color: rgb(28, 28, 48);
+}
+.subHeading{
+    border: groove;
+    width: 100%;
+    text-align: center;
+    color: black;
+    padding: 20px;
+    border: groove;
+}
+.glly{
+    color: white;
+}
+.class1{
+   margin-left: 100px;
+}
+.classes{
+    font-size: 40px;
+}
