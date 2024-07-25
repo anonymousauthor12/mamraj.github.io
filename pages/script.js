@@ -59,7 +59,7 @@ class MyHead extends HTMLElement{
                         <a class="nav-link" id="home" href="Home.html">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="gallery" href="other.html">Gallery</a>
+                        <a class="nav-link" id="gallery" href="extracurricular_activity.html">Gallery</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="course" href="Courses.html">Courses</a>
@@ -130,7 +130,7 @@ class MyGallery extends HTMLElement{
                     <a href="greenery.html">GREENERY</a>
                     </li>
                     <li class="nav-item1">
-                    <a href="other.html">OTHERS</a>
+                    <a href="extracurricular_activity.html">Extracurricular Activity</a>
                     </li>  
                 </ul>
             </div>
