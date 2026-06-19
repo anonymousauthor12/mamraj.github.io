@@ -135,6 +135,49 @@ class SiteFooter extends HTMLElement{
 customElements.define('site-footer', SiteFooter);
 
 /* =====================================================================
+   REPO PHOTO INDEX
+   ---------------------------------------------------------------------
+   ONE GitHub API call lists the whole repo (Git Trees API, recursive).
+   We group every image by its folder, then galleries & covers read from
+   this in-memory map — no per-category calls. Cached in sessionStorage
+   so navigating between pages reuses the same single call.
+   Image files themselves load from raw.githubusercontent.com, which does
+   NOT count against GitHub's 60-requests/hour limit.
+   ===================================================================== */
+const RAW_BASE = `https://raw.githubusercontent.com/${GALLERY_REPO.owner}/${GALLERY_REPO.repo}/${GALLERY_REPO.branch}/`;
+const IMG_RE = /\.(jpe?g|png|gif|webp|bmp)$/i;
+let _treePromise = null;
+
+const TREE_TTL_MS = 2 * 60 * 1000;   // reuse the cached list for 2 minutes, then refresh
+
+function fetchRepoTree(){
+  const cacheKey = `ghtree:${GALLERY_REPO.owner}/${GALLERY_REPO.repo}@${GALLERY_REPO.branch}`;
+  try{
+    const cached = JSON.parse(sessionStorage.getItem(cacheKey) || 'null');
+    if(cached && (Date.now() - cached.t) < TREE_TTL_MS) return Promise.resolve(cached.data);
+  }catch(e){ /* sessionStorage may be unavailable / corrupt */ }
+
+  const url = `https://api.github.com/repos/${GALLERY_REPO.owner}/${GALLERY_REPO.repo}/git/trees/${GALLERY_REPO.branch}?recursive=1`;
+  return fetch(url).then(res => {
+    if(!res.ok) throw new Error('GitHub API ' + res.status);
+    return res.json();
+  }).then(data => {
+    const byFolder = {};
+    (data.tree || []).forEach(node => {
+      if(node.type !== 'blob' || !IMG_RE.test(node.path)) return;
+      const slash = node.path.lastIndexOf('/');
+      const folder = slash === -1 ? '' : node.path.slice(0, slash);
+      (byFolder[folder] || (byFolder[folder] = [])).push(node.path);
+    });
+    Object.keys(byFolder).forEach(k => byFolder[k].sort((a, b) => a.localeCompare(b)));
+    if(data.truncated) console.warn('GitHub tree was truncated — repo is very large.');
+    try{ sessionStorage.setItem(cacheKey, JSON.stringify({ t: Date.now(), data: byFolder })); }catch(e){}
+    return byFolder;
+  });
+}
+function getRepoTree(){ return (_treePromise || (_treePromise = fetchRepoTree())); }
+
+/* =====================================================================
    PHOTO LOADER  (masonry tiles)  — element: <div class="masonry" data-gallery="images/x">
    ===================================================================== */
 async function loadGallery(container){
@@ -143,21 +186,18 @@ async function loadGallery(container){
   if(!folder) return;
   container.innerHTML = `<div class="loading"><div class="spinner"></div>Loading photos…</div>`;
 
-  const api = `https://api.github.com/repos/${GALLERY_REPO.owner}/${GALLERY_REPO.repo}/contents/${folder}?ref=${GALLERY_REPO.branch}`;
   try{
-    const res = await fetch(api);
-    if(!res.ok) throw new Error('GitHub API ' + res.status);
-    let images = (await res.json())
-      .filter(f => f.type === 'file' && /\.(jpe?g|png|gif|webp|bmp)$/i.test(f.name))
-      .sort((a,b) => a.name.localeCompare(b.name))
-      .map(f => f.download_url);
-    if(limit > 0) images = images.slice(0, limit);
+    const tree = await getRepoTree();
+    let paths = tree[folder] || [];
+    if(limit > 0) paths = paths.slice(0, limit);
 
-    if(images.length === 0){ container.innerHTML = `<div class="empty">No photos in this section yet.</div>`; return; }
+    if(paths.length === 0){ container.innerHTML = `<div class="empty">No photos in this section yet.</div>`; return; }
 
     container.classList.add('masonry');
-    container.innerHTML = images.map(url =>
-      `<a class="tile" href="${url}" data-lb><img loading="lazy" src="${url}" alt="School photo"></a>`).join('');
+    container.innerHTML = paths.map(p => {
+      const url = RAW_BASE + p.split('/').map(encodeURIComponent).join('/');
+      return `<a class="tile" href="${url}" data-lb><img loading="lazy" src="${url}" alt="School photo"></a>`;
+    }).join('');
     wireLightbox(container);
   }catch(err){
     console.error('Gallery load failed:', err);
@@ -208,15 +248,17 @@ function wireLightbox(container){
 /* ---------------- gallery category cards (Gallery landing) ---------------- */
 async function loadCategoryCovers(){
   const cards = document.querySelectorAll('[data-cover]');
-  for(const card of cards){
-    const folder = card.getAttribute('data-cover');
-    try{
-      const res = await fetch(`https://api.github.com/repos/${GALLERY_REPO.owner}/${GALLERY_REPO.repo}/contents/${folder}?ref=${GALLERY_REPO.branch}`);
-      if(!res.ok) continue;
-      const imgs = (await res.json()).filter(f => f.type==='file' && /\.(jpe?g|png|gif|webp)$/i.test(f.name));
-      if(imgs.length){ const im = card.querySelector('img'); if(im) im.src = imgs[0].download_url; }
-    }catch(e){ /* keep placeholder */ }
-  }
+  if(!cards.length) return;
+  try{
+    const tree = await getRepoTree();          // shares the single cached call
+    cards.forEach(card => {
+      const paths = tree[card.getAttribute('data-cover')];
+      if(paths && paths.length){
+        const im = card.querySelector('img');
+        if(im) im.src = RAW_BASE + paths[0].split('/').map(encodeURIComponent).join('/');
+      }
+    });
+  }catch(e){ /* keep placeholders */ }
 }
 
 /* ---------------- expose categories for pages that build markup ---------------- */
