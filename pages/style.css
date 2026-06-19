@@ -1,0 +1,93 @@
+body{
+    border: groove;
+}
+.header{
+    height: 30%;
+    border: groove;
+    background-color: rgb(8, 8, 67);
+}
+#logo{
+    width: 180px;
+}
+* {
+    box-sizing: border-box;
+     }
+  
+  /* Create three equal columns that floats next to each other */
+  .column {
+        margin-top: 5px;
+        margin-left: 10px;
+        float: left;
+        width: 33.33%;
+        margin-bottom: 10px;
+        padding: 10px;
+        height: 90%; /* Should be removed. Only for demonstration */
+  }
+  
+  /* Clear floats after the columns */
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  #school_name{
+      color: white;
+      font-size: 45px;
+  }
+  #lg{
+      width: 200px;
+  }
+  #sch{
+      width: 450px;
+  }
+  #add{
+      margin-left: 26%;
+      width: 400px;
+  }
+  .address{
+    font-size: 30px;
+      color: white;
+  }
+
+  .subHeader{
+      height: 70px;
+      border: groove;
+  }
+  .topnav {
+      height: 200px;
+    background-color: #333;
+    overflow: hidden;
+  }
+  
+  /* Style the links inside the navigation bar */
+  .topnav a {
+    float: left;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 25px 40px;
+    text-decoration: none;
+    font-size: 17px;
+  }
+  
+  /* Change the color of links on hover */
+  .topnav a:hover {
+    background-color: #ddd;
+    color: black;
+  }
+  
+  /* Add a color to the active/current link */
+  .topnav a.active {
+    background-color: #04AA6D;
+    color: white;
+  }
+
+
+  .main_page{
+      border: groove;
+      height: 60%;
+  }
+  #prayer{
+      width:100%;
+      height: 550px;
+  }
